@@ -23,6 +23,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".Juego"
+            android:label="Juego"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
+        <activity
             android:name=".AcercaDe"
             android:label="Acerca de..."
             android:theme="@android:style/Theme.Dialog" >
