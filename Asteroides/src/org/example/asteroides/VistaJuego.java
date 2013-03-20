@@ -53,6 +53,8 @@ public class VistaJuego extends View implements SensorEventListener {
     private static int PASO_VELOCIDAD_MISIL = 12;
     private boolean misilActivo = false;
     private int tiempoMisil;
+    private SensorManager mSensorManager;
+    private Sensor orientationSensor;
 
     public VistaJuego(Context context, AttributeSet attrs) {
 
@@ -76,12 +78,12 @@ public class VistaJuego extends View implements SensorEventListener {
 	    Asteroides.add(asteroide);
 	}
 
-	SensorManager mSensorManager = (SensorManager) context
+	mSensorManager = (SensorManager) context
 		.getSystemService(Context.SENSOR_SERVICE);
 	List<Sensor> listSensors = mSensorManager
 		.getSensorList(Sensor.TYPE_ORIENTATION);
 	if (!listSensors.isEmpty()) {
-	    Sensor orientationSensor = listSensors.get(0);
+	    orientationSensor = listSensors.get(0);
 	    mSensorManager.registerListener(this, orientationSensor,
 		    SensorManager.SENSOR_DELAY_GAME);
 	}
@@ -175,10 +177,36 @@ public class VistaJuego extends View implements SensorEventListener {
     }
 
     class ThreadJuego extends Thread {
+	private boolean pausa, corriendo;
+
+	public synchronized void pausar() {
+	    pausa = true;
+	}
+
+	public synchronized void reanudar() {
+	    pausa = false;
+	    notify();
+	}
+
+	public void detener() {
+	    corriendo = false;
+	    if (pausa)
+		reanudar();
+	}
+
 	@Override
 	public void run() {
-	    while (true) {
+	    corriendo = true;
+	    while (corriendo) {
 		actualizaFisica();
+		synchronized (this) {
+		    while (pausa) {
+			try {
+			    wait();
+			} catch (Exception e) {
+			}
+		    }
+		}
 	    }
 	}
     }
@@ -260,5 +288,17 @@ public class VistaJuego extends View implements SensorEventListener {
 		this.getWidth() / Math.abs(misil.getIncX()), this.getHeight()
 			/ Math.abs(misil.getIncY())) - 2;
 	misilActivo = true;
+    }
+
+    public ThreadJuego getThread() {
+        return thread;
+    }
+
+    public SensorManager getmSensorManager() {
+        return mSensorManager;
+    }
+
+    public Sensor getOrientationSensor() {
+        return orientationSensor;
     }
 }
