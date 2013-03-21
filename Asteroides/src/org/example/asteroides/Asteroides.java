@@ -22,7 +22,7 @@ public class Asteroides extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.main);
-	
+
 	mp = MediaPlayer.create(this, R.raw.audio);
 
 	bSalir = (Button) findViewById(R.id.button4);
@@ -116,5 +116,23 @@ public class Asteroides extends Activity {
     protected void onDestroy() {
 	Toast.makeText(this, "onDestroy", Toast.LENGTH_SHORT).show();
 	super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle estadoGuardado) {
+	super.onSaveInstanceState(estadoGuardado);
+	if (mp != null) {
+	    int pos = mp.getCurrentPosition();
+	    estadoGuardado.putInt("posicion", pos);
+	}
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle estadoGuardado) {
+	super.onRestoreInstanceState(estadoGuardado);
+	if (estadoGuardado != null && mp != null) {
+	    int pos = estadoGuardado.getInt("posicion");
+	    mp.seekTo(pos);
+	}
     }
 }
