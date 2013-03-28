@@ -15,7 +15,7 @@ import android.widget.Toast;
 public class Asteroides extends Activity {
 
     private Button bSalir;
-    public static AlmacenPuntuaciones almacen = new AlmacenPuntuacionesArray();
+    public static AlmacenPuntuaciones almacen;
     MediaPlayer mp;
 
     @Override
@@ -31,6 +31,15 @@ public class Asteroides extends Activity {
 		finish();
 	    }
 	});
+
+	// almacen = new AlmacenPuntuacionesArray();
+	// almacen = new AlmacenPuntuacionesPreferencias(this);
+	// almacen = new AlmacenPuntuacionesFicheroInterno(this);
+	// almacen = new AlmacenPuntuacionesFicheroExterno(this);
+	// almacen = new AlmacenPuntuacionesXML_SAX(this);
+	almacen = new AlmacenPuntuacionesSQLite(this);
+
+	startService(new Intent(Asteroides.this, ServicioMusica.class));
     }
 
     @Override
@@ -115,6 +124,7 @@ public class Asteroides extends Activity {
     @Override
     protected void onDestroy() {
 	Toast.makeText(this, "onDestroy", Toast.LENGTH_SHORT).show();
+	stopService(new Intent(Asteroides.this, ServicioMusica.class));
 	super.onDestroy();
     }
 
@@ -133,6 +143,26 @@ public class Asteroides extends Activity {
 	if (estadoGuardado != null && mp != null) {
 	    int pos = estadoGuardado.getInt("posicion");
 	    mp.seekTo(pos);
+	}
+    }
+
+    public void lanzaJuego(View view) {
+	Intent i = new Intent(this, Juego.class);
+	startActivityForResult(i, 1234);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	super.onActivityResult(requestCode, resultCode, data);
+	if (requestCode == 1234 & resultCode == RESULT_OK & data != null) {
+	    int puntuacion = data.getExtras().getInt("puntuacion");
+	    String nombre = "Yo";
+	    // Mejor leerlo desde un Dialog o una nueva actividad
+	    // AlertDialog.Builder
+	    almacen.guardarPuntuacion(puntuacion, nombre,
+		    System.currentTimeMillis());
+	    View view = null;
+	    lanzarPuntuaciones(view);
 	}
     }
 }

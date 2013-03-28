@@ -17,7 +17,7 @@
         android:id="@+id/button1"
         style="@style/TextoAsteroides.Botones"
         android:text="@string/jugar"
-        android:onClick="lanzarJuego" />
+        android:onClick="lanzaJuego" />
 
     <Button
         android:id="@+id/button5"

@@ -3,7 +3,9 @@ package org.example.asteroides;
 import java.util.List;
 import java.util.Vector;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint.Style;
@@ -14,6 +16,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.SoundPool;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -56,6 +60,14 @@ public class VistaJuego extends View implements SensorEventListener {
     private SensorManager mSensorManager;
     private Sensor orientationSensor;
 
+    // //// MULTIMEDIA //////
+    SoundPool soundPool;
+    int idDisparo, idExplosion;
+
+    private int puntuacion = 0;
+
+    private Activity padre;
+
     public VistaJuego(Context context, AttributeSet attrs) {
 
 	super(context, attrs);
@@ -95,6 +107,10 @@ public class VistaJuego extends View implements SensorEventListener {
 	dMisil.setIntrinsicWidth(15);
 	dMisil.setIntrinsicHeight(3);
 	drawableMisil = dMisil;
+
+	// soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+	// idDisparo = soundPool.load(context, R.raw.disparo, 0);
+	// idExplosion = soundPool.load(context, R.raw.explosion, 0);
     }
 
     @Override
@@ -172,6 +188,12 @@ public class VistaJuego extends View implements SensorEventListener {
 			destruyeAsteroide(i);
 			break;
 		    }
+	    }
+	}
+
+	for (Grafico asteroide : Asteroides) {
+	    if (asteroide.verificaColision(nave)) {
+		salir();
 	    }
 	}
     }
@@ -271,6 +293,14 @@ public class VistaJuego extends View implements SensorEventListener {
     private void destruyeAsteroide(int i) {
 	Asteroides.remove(i);
 	misilActivo = false;
+
+	puntuacion += 1000;
+
+	if (Asteroides.isEmpty()) {
+	    salir();
+	}
+
+	// soundPool.play(idExplosion, 1, 1, 0, 0, 1);
     }
 
     private void activaMisil() {
@@ -288,17 +318,32 @@ public class VistaJuego extends View implements SensorEventListener {
 		this.getWidth() / Math.abs(misil.getIncX()), this.getHeight()
 			/ Math.abs(misil.getIncY())) - 2;
 	misilActivo = true;
+
+	// soundPool.play(idDisparo, 1, 1, 1, 0, 1);
     }
 
     public ThreadJuego getThread() {
-        return thread;
+	return thread;
     }
 
     public SensorManager getmSensorManager() {
-        return mSensorManager;
+	return mSensorManager;
     }
 
     public Sensor getOrientationSensor() {
-        return orientationSensor;
+	return orientationSensor;
+    }
+
+    public void setPadre(Activity padre) {
+	this.padre = padre;
+    }
+
+    private void salir() {
+	Bundle bundle = new Bundle();
+	bundle.putInt("puntuacion", puntuacion);
+	Intent intent = new Intent();
+	intent.putExtras(bundle);
+	padre.setResult(Activity.RESULT_OK, intent);
+	padre.finish();
     }
 }
