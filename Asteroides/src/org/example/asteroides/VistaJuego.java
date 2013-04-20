@@ -68,20 +68,51 @@ public class VistaJuego extends View implements SensorEventListener {
 
     private Activity padre;
 
+    public static boolean hardcoreMode = false;
+
     public VistaJuego(Context context, AttributeSet attrs) {
 
 	super(context, attrs);
 	Drawable drawableNave, drawableAsteroide, drawableMisil;
-	drawableAsteroide = context.getResources().getDrawable(
-		R.drawable.asteroide1);
-	drawableNave = context.getResources().getDrawable(R.drawable.nave);
-	drawableMisil = context.getResources().getDrawable(R.drawable.misil1);
+	if (hardcoreMode) {
+	    drawableAsteroide = context.getResources().getDrawable(
+		    R.drawable.david);
+	    drawableNave = context.getResources().getDrawable(R.drawable.pene);
+	    drawableMisil = context.getResources().getDrawable(
+		    R.drawable.splash);
+	} else {
+	    drawableAsteroide = context.getResources().getDrawable(
+		    R.drawable.asteroide1);
+	    drawableNave = context.getResources().getDrawable(R.drawable.nave);
+	    drawableMisil = context.getResources().getDrawable(
+		    R.drawable.misil1);
+	}
 
 	nave = new Grafico(this, drawableNave);
 	misil = new Grafico(this, drawableMisil);
 	Asteroides = new Vector<Grafico>();
 
 	for (int i = 0; i < numAsteroides; i++) {
+	    if (hardcoreMode) {
+		switch (Math.round((float) Math.random() * 3)) {
+		case 0:
+		    drawableAsteroide = context.getResources().getDrawable(
+			    R.drawable.abraham);
+		    break;
+		case 1:
+		    drawableAsteroide = context.getResources().getDrawable(
+			    R.drawable.david);
+		    break;
+		case 2:
+		    drawableAsteroide = context.getResources().getDrawable(
+			    R.drawable.jose);
+		    break;
+		default:
+		    drawableAsteroide = context.getResources().getDrawable(
+			    R.drawable.jose);
+		    break;
+		}
+	    }
 	    Grafico asteroide = new Grafico(this, drawableAsteroide);
 	    asteroide.setIncY(Math.random() * 4 - 2);
 	    asteroide.setIncX(Math.random() * 4 - 2);

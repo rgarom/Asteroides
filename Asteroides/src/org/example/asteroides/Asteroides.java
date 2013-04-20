@@ -15,6 +15,7 @@ import android.widget.Toast;
 public class Asteroides extends Activity {
 
     private Button bSalir;
+    private Button bHardcoreMode;
     public static AlmacenPuntuaciones almacen;
     MediaPlayer mp;
 
@@ -32,12 +33,23 @@ public class Asteroides extends Activity {
 	    }
 	});
 
+	bHardcoreMode = (Button) findViewById(R.id.textView1);
+	bHardcoreMode.setOnClickListener(new OnClickListener() {
+	    public void onClick(View view) {
+		VistaJuego.hardcoreMode = true;
+		Intent i = new Intent(bHardcoreMode.getContext(), Juego.class);
+		startActivity(i);
+
+	    }
+	});
+
 	// almacen = new AlmacenPuntuacionesArray();
 	// almacen = new AlmacenPuntuacionesPreferencias(this);
 	// almacen = new AlmacenPuntuacionesFicheroInterno(this);
 	// almacen = new AlmacenPuntuacionesFicheroExterno(this);
 	// almacen = new AlmacenPuntuacionesXML_SAX(this);
-	almacen = new AlmacenPuntuacionesSQLite(this);
+	//almacen = new AlmacenPuntuacionesSQLite(this);
+	almacen = new AlmacenPuntuacionesSocket();
 
 	startService(new Intent(Asteroides.this, ServicioMusica.class));
     }

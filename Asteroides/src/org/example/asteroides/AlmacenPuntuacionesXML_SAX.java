@@ -95,12 +95,17 @@ public class AlmacenPuntuacionesXML_SAX implements AlmacenPuntuaciones {
 	}
 
 	public void leerXML(InputStream entrada) throws Exception {
+	    // Leer servicio web
+	    // URL url = new
+	    // URL("http://books.google.com/books/feeds/volumes?q=\"Ò
+	    // + URLEncoder.encode(palabras, "UTF-8") + "\"");
 	    SAXParserFactory fabrica = SAXParserFactory.newInstance();
 	    SAXParser parser = fabrica.newSAXParser();
 	    XMLReader lector = parser.getXMLReader();
 	    ManejadorXML manejadorXML = new ManejadorXML();
 	    lector.setContentHandler(manejadorXML);
 	    lector.parse(new InputSource(entrada));
+	    // lector.parse(new InputSource(url.openStream()));
 	    cargadaLista = true;
 	}
 
